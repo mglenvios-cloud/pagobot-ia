@@ -1,0 +1,12 @@
+{
+  "name": "pagobot-ia",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:start": "cd backend && npm start",
+    "install:all": "cd frontend && npm install && cd ../backend && npm install"
+  }
+}
