@@ -1,3 +1,7 @@
+export function fmt(n) {
+  return parseFloat(n).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+
 const metodoLabels = {
   debito_automatico: 'Débito Automático',
   transferencia: 'Transferencia',
@@ -28,9 +32,9 @@ export async function generarPDF({ titulo, periodo, totalIngresos, totalGastos, 
   doc.text('Resumen', 14, 48)
 
   doc.setFontSize(10)
-  doc.text(`Total Ingresos: +$${totalIngresos.toFixed(2)}`, 14, 56)
-  doc.text(`Total Gastos: -$${totalGastos.toFixed(2)}`, 14, 63)
-  doc.text(`Balance: $${balance.toFixed(2)}`, 14, 70)
+  doc.text(`Total Ingresos: +$${fmt(totalIngresos)}`, 14, 56)
+  doc.text(`Total Gastos: -$${fmt(totalGastos)}`, 14, 63)
+  doc.text(`Balance: $${fmt(balance)}`, 14, 70)
   if (totalIngresos > 0) {
     doc.text(`Relación Gasto/Ingreso: ${((totalGastos / totalIngresos) * 100).toFixed(1)}%`, 14, 77)
   }
@@ -47,7 +51,7 @@ export async function generarPDF({ titulo, periodo, totalIngresos, totalGastos, 
         item.concepto,
         item.categoria || '-',
         metodoLabels[item.metodo_pago] || item.metodo_pago || '-',
-        { content: `+$${parseFloat(item.monto).toFixed(2)}`, styles: { textColor: [22, 163, 74] } },
+        { content: `+$${fmt(item.monto)}`, styles: { textColor: [22, 163, 74] } },
       ]
     }
     const estado = item.pagado ? 'Pagado' : 'Pendiente'
@@ -57,7 +61,7 @@ export async function generarPDF({ titulo, periodo, totalIngresos, totalGastos, 
       item.categoria,
       metodoLabels[item.metodo_pago] || item.metodo_pago || '-',
       estado,
-      { content: `-$${parseFloat(item.monto).toFixed(2)}`, styles: { textColor: [220, 38, 38] } },
+      { content: `-$${fmt(item.monto)}`, styles: { textColor: [220, 38, 38] } },
     ]
   })
 
@@ -90,7 +94,7 @@ export function printReport({ titulo, items }) {
         <td>${item.concepto}</td>
         <td>${item.categoria || '-'}</td>
         <td>${metodoLabels[item.metodo_pago] || item.metodo_pago || '-'}</td>
-        <td style="color:#16a34a;font-weight:bold">+$${parseFloat(item.monto).toFixed(2)}</td>
+        <td style="color:#16a34a;font-weight:bold">+$${fmt(item.monto)}</td>
       </tr>`
     }
     const estado = item.pagado ? '✅ Pagado' : '⏳ Pendiente'
@@ -100,7 +104,7 @@ export function printReport({ titulo, items }) {
       <td>${item.categoria}</td>
       <td>${metodoLabels[item.metodo_pago] || item.metodo_pago || '-'}</td>
       <td>${estado}</td>
-      <td style="color:#dc2626;font-weight:bold">-$${parseFloat(item.monto).toFixed(2)}</td>
+      <td style="color:#dc2626;font-weight:bold">-$${fmt(item.monto)}</td>
     </tr>`
   }).join('')
 

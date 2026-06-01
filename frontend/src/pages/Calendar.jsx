@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { fmt } from '../lib/format'
 import PaymentDetail from '../components/PaymentDetail'
 import PaymentForm from '../components/PaymentForm'
 import IncomeForm from '../components/IncomeForm'
@@ -127,8 +128,8 @@ export default function Calendar() {
       </div>
 
       <div className="grid grid-cols-4 gap-3">
-        <div className="card text-center"><p className="text-xs text-gray-500">Gastos</p><p className="text-lg font-bold text-red-600">${totalMes.toFixed(2)}</p></div>
-        <div className="card text-center"><p className="text-xs text-gray-500">Ingresos</p><p className="text-lg font-bold text-green-600">+${ingresosMes.toFixed(2)}</p></div>
+        <div className="card text-center"><p className="text-xs text-gray-500">Gastos</p><p className="text-lg font-bold text-red-600">${fmt(totalMes)}</p></div>
+        <div className="card text-center"><p className="text-xs text-gray-500">Ingresos</p><p className="text-lg font-bold text-green-600">+${fmt(ingresosMes)}</p></div>
         <div className="card text-center"><p className="text-xs text-gray-500">Pendientes</p><p className="text-lg font-bold text-yellow-600">{pendientesMes}</p></div>
         <div className="card text-center"><p className="text-xs text-gray-500">Pagados</p><p className="text-lg font-bold text-green-600">{pagadosMes}</p></div>
       </div>
@@ -202,8 +203,8 @@ export default function Calendar() {
                       {d.toLocaleDateString('es', { weekday: 'long' })} {d.getDate()}
                     </span>
                     <div className="text-right">
-                      {ingresosDia > 0 && <span className="text-sm font-bold text-green-600 block">+${ingresosDia.toFixed(2)}</span>}
-                      {totalDia > 0 && <span className="text-sm font-bold text-red-600 block">-${totalDia.toFixed(2)}</span>}
+                      {ingresosDia > 0 && <span className="text-sm font-bold text-green-600 block">+${fmt(ingresosDia)}</span>}
+                      {totalDia > 0 && <span className="text-sm font-bold text-red-600 block">-${fmt(totalDia)}</span>}
                     </div>
                   </div>
                   {dayPagos.length === 0 && dayIngresos.length === 0 ? (
@@ -213,13 +214,13 @@ export default function Calendar() {
                       {dayPagos.map((p) => (
                         <button key={p.id} onClick={() => setSelectedPago(p)} className="w-full flex items-center justify-between text-sm ml-2 py-0.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded px-1">
                           <span>💳 {p.concepto} {p.pagado ? '✅' : '⏳'}</span>
-                          <span className="font-medium">${parseFloat(p.monto).toFixed(2)}</span>
+                          <span className="font-medium">${fmt(p.monto)}</span>
                         </button>
                       ))}
                       {dayIngresos.map((i) => (
                         <div key={i.id} className="flex items-center justify-between text-sm ml-2 py-0.5">
                           <span>💰 {i.concepto} {i.cobrado ? '✅' : '⏳'}</span>
-                          <span className="font-medium text-green-600">+${parseFloat(i.monto).toFixed(2)}</span>
+                          <span className="font-medium text-green-600">+${fmt(i.monto)}</span>
                         </div>
                       ))}
                     </>
@@ -239,12 +240,12 @@ export default function Calendar() {
             <div className="text-right">
               {selectedIngresos.length > 0 && (
                 <div className="text-sm font-bold text-green-600">
-                  +${selectedIngresos.reduce((a, i) => a + parseFloat(i.monto), 0).toFixed(2)}
+                  +${fmt(selectedIngresos.reduce((a, i) => a + parseFloat(i.monto), 0))}
                 </div>
               )}
               {selectedPagos.length > 0 && (
                 <div className="text-sm font-bold text-red-600">
-                  -${selectedPagos.reduce((a, p) => a + parseFloat(p.monto), 0).toFixed(2)}
+                  -${fmt(selectedPagos.reduce((a, p) => a + parseFloat(p.monto), 0))}
                 </div>
               )}
             </div>
@@ -266,7 +267,7 @@ export default function Calendar() {
                       {i.descripcion && <span>{i.descripcion}</span>}
                     </div>
                   </div>
-                  <span className="font-bold text-green-600">+${parseFloat(i.monto).toFixed(2)}</span>
+                  <span className="font-bold text-green-600">+${fmt(i.monto)}</span>
                 </div>
               ))}
             </div>
@@ -290,7 +291,7 @@ export default function Calendar() {
                       {p.es_recurrente && ` · ${p.recurrencia_tipo === 'diario' ? 'Diario' : p.recurrencia_tipo === 'semanal' ? 'Semanal' : p.recurrencia_tipo === 'mensual' ? 'Mensual' : 'Anual'}`}
                     </div>
                   </div>
-                  <span className="font-bold">${parseFloat(p.monto).toFixed(2)}</span>
+                  <span className="font-bold">${fmt(p.monto)}</span>
                 </button>
               ))}
             </div>

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { fmt } from '../lib/format'
 import { HiLightBulb, HiExclamation, HiTrendingUp, HiBan, HiSparkles, HiRefresh } from 'react-icons/hi'
 
 const CATEGORIAS_GASTO = {
@@ -35,12 +36,12 @@ export default function AIAnalysis() {
       const coincidencias = pagos.filter((p) => config.keywords.some((kw) => p.concepto.toLowerCase().includes(kw)))
       if (coincidencias.length > 0) {
         const totalCat = coincidencias.reduce((a, p) => a + parseFloat(p.monto), 0)
-        const ahorro = (totalCat * 0.25).toFixed(2)
+        const ahorro = (totalCat * 0.25)
         recomendaciones.push({
           tipo, titulo: config.titulo, icono: config.icono,
           mensaje: tipo === 'suscripciones'
-            ? `Gastaste $${totalCat.toFixed(2)} en suscripciones (${coincidencias.length} servicios). ${coincidencias.length > 2 ? `¿Realmente usás todas? Cancelar 1 te ahorraría ~$${ahorro}/mes.` : 'Considerá planes compartidos.'}`
-            : `Gastaste $${totalCat.toFixed(2)} en ${config.titulo.toLowerCase()}. ${tipo === 'delivery' ? 'Cocinar en casa 2 veces por semana te ahorraría ~$' + ahorro + '.' : 'Podrías reducir ~$' + ahorro + ' este mes.'}`,
+            ? `Gastaste $${fmt(totalCat)} en suscripciones (${coincidencias.length} servicios). ${coincidencias.length > 2 ? `¿Realmente usás todas? Cancelar 1 te ahorraría ~$${fmt(ahorro)}/mes.` : 'Considerá planes compartidos.'}`
+            : `Gastaste $${fmt(totalCat)} en ${config.titulo.toLowerCase()}. ${tipo === 'delivery' ? 'Cocinar en casa 2 veces por semana te ahorraría ~$' + fmt(ahorro) + '.' : 'Podrías reducir ~$' + fmt(ahorro) + ' este mes.'}`,
           monto: totalCat, cantidad: coincidencias.length, ahorro,
         })
       }
@@ -50,8 +51,8 @@ export default function AIAnalysis() {
     if (maxGasto && total > 0 && parseFloat(maxGasto.monto) > total * 0.3) {
       recomendaciones.push({
         tipo: 'gasto_alto', titulo: '⚠️ Gasto Alto', icono: '⚠️',
-        mensaje: `${maxGasto.concepto} ($${parseFloat(maxGasto.monto).toFixed(2)}) es el ${(parseFloat(maxGasto.monto) / total * 100).toFixed(0)}% de tus gastos. ¿Buscaste alternativas más económicas?`,
-        monto: parseFloat(maxGasto.monto), ahorro: (parseFloat(maxGasto.monto) * 0.15).toFixed(2),
+        mensaje: `${maxGasto.concepto} ($${fmt(maxGasto.monto)}) es el ${(parseFloat(maxGasto.monto) / total * 100).toFixed(0)}% de tus gastos. ¿Buscaste alternativas más económicas?`,
+        monto: parseFloat(maxGasto.monto), ahorro: (parseFloat(maxGasto.monto) * 0.15),
       })
     }
 
@@ -91,11 +92,11 @@ export default function AIAnalysis() {
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
                 <p className="text-blue-200 text-sm">Gastado este mes</p>
-                <p className="text-3xl font-bold">${data.total_gastado.toFixed(2)}</p>
+                <p className="text-3xl font-bold">${fmt(data.total_gastado)}</p>
               </div>
               <div>
                 <p className="text-blue-200 text-sm">Ahorro potencial</p>
-                <p className="text-3xl font-bold text-green-300">~${data.ahorro_total.toFixed(2)}</p>
+                <p className="text-3xl font-bold text-green-300">~${fmt(data.ahorro_total)}</p>
               </div>
             </div>
             <p className="text-blue-100 text-sm">{data.cantidad_pagos} pagos registrados</p>
@@ -128,12 +129,12 @@ export default function AIAnalysis() {
                       <span className="font-medium">{s.concepto}</span>
                       <span className="text-sm text-gray-500 ml-2">{s.categoria}</span>
                     </div>
-                    <span className="font-bold">${parseFloat(s.monto).toFixed(2)}/mes</span>
+                    <span className="font-bold">${fmt(s.monto)}/mes</span>
                   </div>
                 ))}
               </div>
               <p className="text-sm text-gray-500 mt-3">
-                Total en suscripciones: <strong className="text-gray-800 dark:text-gray-200">${susData.reduce((a, s) => a + parseFloat(s.monto), 0).toFixed(2)}/mes</strong>
+                Total en suscripciones: <strong className="text-gray-800 dark:text-gray-200">${fmt(susData.reduce((a, s) => a + parseFloat(s.monto), 0))}/mes</strong>
               </p>
             </div>
           )}

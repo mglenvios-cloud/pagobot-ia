@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { fmt } from '../lib/format'
 import PaymentForm from '../components/PaymentForm'
 import PaymentList from '../components/PaymentList'
 import IncomeForm from '../components/IncomeForm'
@@ -61,9 +62,9 @@ export default function Home() {
   const balance = stats.ingresos - stats.gastado
 
   const cards = [
-    { label: 'Gastado', value: `$${stats.gastado.toFixed(2)}`, icon: HiArrowUp, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' },
-    { label: 'Ingresos', value: `$${stats.ingresos.toFixed(2)}`, icon: HiArrowDown, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20' },
-    { label: 'Balance', value: `$${balance.toFixed(2)}`, icon: HiCreditCard, color: balance >= 0 ? 'text-green-500' : 'text-red-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
+    { label: 'Gastado', value: `$${fmt(stats.gastado)}`, icon: HiArrowUp, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' },
+    { label: 'Ingresos', value: `$${fmt(stats.ingresos)}`, icon: HiArrowDown, color: 'text-green-500', bg: 'bg-green-50 dark:bg-green-900/20' },
+    { label: 'Balance', value: `$${fmt(balance)}`, icon: HiCreditCard, color: balance >= 0 ? 'text-green-500' : 'text-red-500', bg: 'bg-blue-50 dark:bg-blue-900/20' },
     { label: 'Vencidos', value: stats.vencidos, icon: HiExclamation, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' },
   ]
 

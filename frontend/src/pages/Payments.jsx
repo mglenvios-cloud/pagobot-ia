@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { fmt } from '../lib/format'
 import { HiSearch, HiFilter } from 'react-icons/hi'
 
 export default function Payments() {
@@ -66,7 +67,7 @@ export default function Payments() {
                     <tr key={p.id} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
                       <td className="px-4 py-3 font-medium">{p.concepto}</td>
                       <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{p.categoria}</td>
-                      <td className="px-4 py-3 text-right font-semibold">${parseFloat(p.monto).toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right font-semibold">${fmt(p.monto)}</td>
                       <td className="px-4 py-3 text-gray-500 hidden sm:table-cell">{p.fecha_vencimiento}</td>
                       <td className="px-4 py-3 text-center">
                         {p.pagado ? <span className="badge-paid">Pagado</span> : vencido ? <span className="badge-overdue">Vencido</span> : <span className="badge-pending">Pendiente</span>}

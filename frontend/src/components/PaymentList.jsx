@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { fmt } from '../lib/format'
 import { HiCheck, HiTrash, HiBell, HiPencil } from 'react-icons/hi'
 
 export default function PaymentList({ refreshKey, onEdit }) {
@@ -78,7 +79,7 @@ export default function PaymentList({ refreshKey, onEdit }) {
                   )}
                 </div>
                 <div className="flex items-center gap-3 mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  <span className="font-bold text-gray-800 dark:text-gray-200">${parseFloat(p.monto).toFixed(2)}</span>
+                  <span className="font-bold text-gray-800 dark:text-gray-200">${fmt(p.monto)}</span>
                   <span>📅 {p.fecha_vencimiento}</span>
                   {vencido && <span className="badge-overdue">VENCIDO</span>}
                   {proximo && !vencido && <span className="badge-pending">Próximo</span>}

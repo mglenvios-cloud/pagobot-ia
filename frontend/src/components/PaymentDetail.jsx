@@ -1,4 +1,5 @@
 import { HiX, HiPencil, HiCheck, HiTrash, HiBell } from 'react-icons/hi'
+import { fmt } from '../lib/format'
 
 const metodoLabels = {
   debito_automatico: 'Débito Automático',
@@ -38,7 +39,7 @@ export default function PaymentDetail({ pago, onClose, onEdit, onTogglePagado, o
               <h4 className="text-xl font-bold">{pago.concepto}</h4>
               <span className="badge bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 mt-1 inline-block">{pago.categoria}</span>
             </div>
-            <span className="text-3xl font-extrabold text-blue-600 dark:text-blue-400">${parseFloat(pago.monto).toFixed(2)}</span>
+            <span className="text-3xl font-extrabold text-blue-600 dark:text-blue-400">${fmt(pago.monto)}</span>
           </div>
 
           <div className="grid grid-cols-2 gap-3 bg-gray-50 dark:bg-gray-800 rounded-2xl p-4">

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
+import { fmt } from '../lib/format'
 import { generarPDF, printReport } from '../lib/pdfGenerator'
 import { HiDownload, HiPrinter } from 'react-icons/hi'
 
@@ -140,9 +141,9 @@ export default function Reports() {
       )}
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div className="card text-center"><p className="text-xs text-gray-500">Ingresos</p><p className="text-lg font-bold text-green-600">+${totalIngresos.toFixed(2)}</p></div>
-        <div className="card text-center"><p className="text-xs text-gray-500">Gastos</p><p className="text-lg font-bold text-red-600">-${totalGastos.toFixed(2)}</p></div>
-        <div className="card text-center"><p className="text-xs text-gray-500">Balance</p><p className={`text-lg font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>${balance.toFixed(2)}</p></div>
+        <div className="card text-center"><p className="text-xs text-gray-500">Ingresos</p><p className="text-lg font-bold text-green-600">+${fmt(totalIngresos)}</p></div>
+        <div className="card text-center"><p className="text-xs text-gray-500">Gastos</p><p className="text-lg font-bold text-red-600">-${fmt(totalGastos)}</p></div>
+        <div className="card text-center"><p className="text-xs text-gray-500">Balance</p><p className={`text-lg font-bold ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>${fmt(balance)}</p></div>
         <div className="card text-center"><p className="text-xs text-gray-500">Transacciones</p><p className="text-lg font-bold">{items.length}</p></div>
       </div>
 
@@ -185,7 +186,7 @@ export default function Reports() {
                       )}
                     </td>
                     <td className={`p-3 text-right font-bold ${item.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
-                      {item.type === 'income' ? '+' : '-'}${parseFloat(item.monto).toFixed(2)}
+                      {item.type === 'income' ? '+' : '-'}${fmt(item.monto)}
                     </td>
                   </tr>
                 ))}
@@ -194,7 +195,7 @@ export default function Reports() {
                 <tr>
                   <td colSpan="4" className="p-3 text-right">Totales:</td>
                   <td className={`p-3 text-right ${balance >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    ${balance.toFixed(2)}
+                    ${fmt(balance)}
                   </td>
                 </tr>
               </tfoot>
