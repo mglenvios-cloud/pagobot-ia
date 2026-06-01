@@ -82,6 +82,34 @@ CREATE INDEX IF NOT EXISTS idx_pagos_recurrente ON pagos(es_recurrente);
 CREATE INDEX IF NOT EXISTS idx_ingresos_usuario ON ingresos(usuario_id);
 CREATE INDEX IF NOT EXISTS idx_ingresos_fecha ON ingresos(fecha);
 
+CREATE TABLE IF NOT EXISTS objetivos (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  nombre TEXT NOT NULL,
+  monto_objetivo DECIMAL(12, 2) NOT NULL CHECK (monto_objetivo > 0),
+  monto_actual DECIMAL(12, 2) DEFAULT 0,
+  fecha_limite DATE,
+  icono TEXT DEFAULT '🎯',
+  color TEXT DEFAULT '#2563eb',
+  completado BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS config (
+  id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  clave TEXT UNIQUE NOT NULL,
+  valor TEXT NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+INSERT INTO config (clave, valor) VALUES
+  ('pin', ''),
+  ('whatsapp_numero', '5491163589041'),
+  ('notificaciones', 'true'),
+  ('backup_auto', 'false')
+ON CONFLICT (clave) DO NOTHING;
+
+CREATE INDEX IF NOT EXISTS idx_objetivos_fecha ON objetivos(fecha_limite);
+
 -- ============================================
 -- FUNCIONES
 -- ============================================
@@ -118,7 +146,11 @@ $$ LANGUAGE plpgsql;
 ALTER TABLE pagos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE ingresos ENABLE ROW LEVEL SECURITY;
 ALTER TABLE categorias ENABLE ROW LEVEL SECURITY;
+ALTER TABLE objetivos ENABLE ROW LEVEL SECURITY;
+ALTER TABLE config ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Acceso anonimo pagos" ON pagos FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Acceso anonimo ingresos" ON ingresos FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Acceso anonimo categorias" ON categorias FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Acceso anonimo objetivos" ON objetivos FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Acceso anonimo config" ON config FOR ALL USING (true) WITH CHECK (true);

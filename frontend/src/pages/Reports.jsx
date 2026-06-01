@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { fmt } from '../lib/format'
 import { generarPDF, printReport } from '../lib/pdfGenerator'
-import { HiDownload, HiPrinter } from 'react-icons/hi'
+import { HiDownload, HiPrinter, HiDocumentText } from 'react-icons/hi'
 
 export default function Reports() {
   const hoy = new Date()
@@ -100,6 +100,35 @@ export default function Reports() {
       balance,
       items,
     })
+  }
+
+  const handleExcel = () => {
+    const XLSX = window.XLSX
+    if (!XLSX) {
+      const script = document.createElement('script')
+      script.src = 'https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js'
+      script.onload = () => doExcel()
+      document.head.appendChild(script)
+      return
+    }
+    doExcel()
+  }
+
+  const doExcel = () => {
+    const XLSX = window.XLSX
+    const data = items.map((item) => ({
+      Fecha: item.fecha_vencimiento || item.fecha,
+      Concepto: item.concepto,
+      Categoría: item.categoria || '-',
+      Tipo: item.type === 'income' ? 'Ingreso' : item.pagado ? 'Gasto (Pagado)' : 'Gasto (Pendiente)',
+      Monto: item.type === 'income' ? parseFloat(item.monto) : -parseFloat(item.monto),
+    }))
+    const wb = XLSX.utils.book_new()
+    const ws = XLSX.utils.json_to_sheet(data)
+    XLSX.utils.book_append_sheet(wb, ws, 'Movimientos')
+    const totalRow = { Fecha: '', Concepto: 'TOTAL', Categoría: '', Tipo: '', Monto: data.reduce((a, r) => a + r.Monto, 0) }
+    XLSX.utils.sheet_add_json(ws, [totalRow], { skipHeader: true, origin: -1 })
+    XLSX.writeFile(wb, `reporte-${periodoLabel.replace(/[/\s]/g, '-')}.xlsx`)
   }
 
   const handlePrint = () => {
@@ -205,9 +234,12 @@ export default function Reports() {
       )}
 
       {items.length > 0 && (
-        <div className="flex gap-3">
+        <div className="flex gap-2 flex-col sm:flex-row">
           <button onClick={handlePDF} className="btn-primary flex-1 flex items-center justify-center gap-2">
-            <HiDownload className="text-lg" /> Descargar PDF
+            <HiDownload className="text-lg" /> PDF
+          </button>
+          <button onClick={handleExcel} className="px-4 py-2.5 bg-green-600 text-white rounded-xl text-sm font-medium flex items-center justify-center gap-2 hover:bg-green-700 transition-all flex-1">
+            <HiDocumentText className="text-lg" /> Excel
           </button>
           <button onClick={handlePrint} className="btn-secondary flex-1 flex items-center justify-center gap-2">
             <HiPrinter className="text-lg" /> Imprimir

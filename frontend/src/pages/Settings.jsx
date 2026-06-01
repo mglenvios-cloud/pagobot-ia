@@ -1,20 +1,28 @@
 import { useState, useEffect } from 'react'
 import { useTheme } from '../context/ThemeContext'
 import { supabase } from '../lib/supabase'
-import { HiShieldCheck, HiDatabase, HiPhone, HiSun, HiMoon, HiDownload, HiShare, HiPlus, HiTrash } from 'react-icons/hi'
+import { HiShieldCheck, HiDatabase, HiPhone, HiSun, HiMoon, HiDownload, HiShare, HiPlus, HiTrash, HiLockClosed } from 'react-icons/hi'
 
 export default function Settings() {
   const { dark, toggleDark } = useTheme()
   const [categorias, setCategorias] = useState([])
   const [newCat, setNewCat] = useState({ nombre: '', icono: '📦', tipo: 'gasto' })
   const [updating, setUpdating] = useState(false)
+  const [pin, setPin] = useState('')
+  const [pinInput, setPinInput] = useState('')
+  const [pinMsg, setPinMsg] = useState('')
+
+  useEffect(() => {
+    supabase.from('config').select('valor').eq('clave', 'pin').single().then(({ data }) => {
+      if (data) setPin(data.valor)
+    })
+    loadCats()
+  }, [])
 
   const loadCats = async () => {
     const { data } = await supabase.from('categorias').select('*').order('id')
     if (data) setCategorias(data)
   }
-
-  useEffect(() => { loadCats() }, [])
 
   const addCategoria = async () => {
     if (!newCat.nombre) return
@@ -28,6 +36,23 @@ export default function Settings() {
     if (!confirm('¿Eliminar esta categoría?')) return
     await supabase.from('categorias').delete().eq('id', id)
     loadCats()
+  }
+
+  const savePin = async () => {
+    if (pinInput.length !== 4) { setPinMsg('El PIN debe tener 4 dígitos'); return }
+    await supabase.from('config').update({ valor: pinInput }).eq('clave', 'pin')
+    setPin(pinInput)
+    setPinInput('')
+    setPinMsg('✅ PIN guardado')
+    setTimeout(() => setPinMsg(''), 2000)
+  }
+
+  const removePin = async () => {
+    if (!confirm('¿Eliminar el PIN de seguridad?')) return
+    await supabase.from('config').update({ valor: '' }).eq('clave', 'pin')
+    setPin('')
+    setPinMsg('✅ PIN eliminado')
+    setTimeout(() => setPinMsg(''), 2000)
   }
 
   const shareApp = async () => {
@@ -61,10 +86,27 @@ export default function Settings() {
         </button>
       </div>
 
-      {/* Gestión de Categorías */}
+      <div className="card space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-xl flex items-center justify-center">
+            <HiLockClosed className="text-xl text-red-600" />
+          </div>
+          <div>
+            <h3 className="font-semibold">Seguridad PIN</h3>
+            <p className="text-sm text-gray-500">Bloqueo de app con PIN de 4 dígitos</p>
+          </div>
+        </div>
+        {pin && <p className="text-sm text-green-600">🔒 PIN activo</p>}
+        <div className="flex gap-2">
+          <input type="password" maxLength={4} inputMode="numeric" pattern="[0-9]*" value={pinInput} onChange={(e) => setPinInput(e.target.value.replace(/\D/g, ''))} placeholder={pin ? 'Nuevo PIN' : 'Crear PIN (4 dígitos)'} className="input flex-1" />
+          <button onClick={savePin} className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-all">Guardar</button>
+          {pin && <button onClick={removePin} className="px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-600 rounded-xl text-sm font-medium hover:bg-red-200 dark:hover:bg-red-900/50 transition-all">Quitar</button>}
+        </div>
+        {pinMsg && <p className="text-sm text-green-600">{pinMsg}</p>}
+      </div>
+
       <div className="card space-y-4">
         <h3 className="font-semibold flex items-center gap-2">📂 Categorías</h3>
-
         <div className="flex flex-wrap gap-2">
           {categorias.map((c) => (
             <div key={c.id} className="flex items-center gap-1 px-3 py-1.5 bg-gray-100 dark:bg-gray-800 rounded-xl text-sm">
@@ -73,7 +115,6 @@ export default function Settings() {
             </div>
           ))}
         </div>
-
         <div className="flex flex-col sm:flex-row gap-2">
           <input value={newCat.nombre} onChange={(e) => setNewCat((c) => ({ ...c, nombre: e.target.value }))} placeholder="Nueva categoría" className="input flex-1" />
           <select value={newCat.icono} onChange={(e) => setNewCat((c) => ({ ...c, icono: e.target.value }))} className="input sm:w-20">
@@ -133,7 +174,7 @@ export default function Settings() {
           </div>
         </div>
         <p className="text-sm text-gray-600 dark:text-gray-400">
-          Analiza delivery, suscripciones, salidas, supermercado y transporte. Recomienda ahorro personalizado.
+          Analiza delivery, suscripciones, salidas, supermercado y transporte. Recomienda ahorro personalizado y detecta incrementos.
         </p>
       </div>
 

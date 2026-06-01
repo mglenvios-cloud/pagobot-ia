@@ -10,6 +10,7 @@ export default function Navbar() {
     { to: '/', label: 'Inicio' },
     { to: '/pagos', label: 'Pagos' },
     { to: '/calendario', label: 'Calendario' },
+    { to: '/objetivos', label: 'Metas' },
     { to: '/reportes', label: 'Reportes' },
     { to: '/analisis', label: 'Análisis IA' },
   ]

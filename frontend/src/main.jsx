@@ -5,6 +5,10 @@ import App from './App'
 import { ThemeProvider } from './context/ThemeContext'
 import './index.css'
 
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw.js')
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
