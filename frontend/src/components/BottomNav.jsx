@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
-import { HiHome, HiCreditCard, HiCalendar, HiChartBar, HiCog } from 'react-icons/hi'
+import { HiHome, HiCreditCard, HiCalendar, HiChartBar, HiCog, HiDocument } from 'react-icons/hi'
 
 const items = [
   { to: '/', icon: HiHome, label: 'Inicio' },
   { to: '/pagos', icon: HiCreditCard, label: 'Pagos' },
   { to: '/calendario', icon: HiCalendar, label: 'Calendario' },
+  { to: '/reportes', icon: HiDocument, label: 'Reportes' },
   { to: '/analisis', icon: HiChartBar, label: 'IA' },
   { to: '/configuracion', icon: HiCog, label: 'Ajustes' },
 ]

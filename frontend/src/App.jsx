@@ -5,6 +5,7 @@ import Home from './pages/Home'
 import Payments from './pages/Payments'
 import Calendar from './pages/Calendar'
 import AIAnalysis from './pages/AIAnalysis'
+import Reports from './pages/Reports'
 import Settings from './pages/Settings'
 
 export default function App() {
@@ -17,6 +18,7 @@ export default function App() {
           <Route path="/pagos" element={<Payments />} />
           <Route path="/calendario" element={<Calendar />} />
           <Route path="/analisis" element={<AIAnalysis />} />
+          <Route path="/reportes" element={<Reports />} />
           <Route path="/configuracion" element={<Settings />} />
         </Routes>
       </main>

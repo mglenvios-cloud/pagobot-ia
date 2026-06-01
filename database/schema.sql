@@ -61,8 +61,12 @@ CREATE TABLE IF NOT EXISTS ingresos (
   concepto TEXT NOT NULL,
   monto DECIMAL(12, 2) NOT NULL CHECK (monto > 0),
   categoria_id BIGINT REFERENCES categorias(id),
+  categoria TEXT NOT NULL DEFAULT 'Otros',
+  descripcion TEXT,
+  metodo_pago TEXT DEFAULT 'transferencia' CHECK (metodo_pago IN ('transferencia', 'efectivo', 'tarjeta', 'otro')),
   fecha DATE NOT NULL,
   es_recurrente BOOLEAN DEFAULT FALSE,
+  cobrado BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
