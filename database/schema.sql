@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS pagos (
   categoria TEXT NOT NULL DEFAULT 'Otros',
   fecha_vencimiento DATE NOT NULL,
   es_recurrente BOOLEAN DEFAULT FALSE,
-  recurrencia_tipo TEXT DEFAULT 'mensual' CHECK (recurrencia_tipo IN ('semanal', 'mensual', 'anual')),
+  recurrencia_tipo TEXT DEFAULT 'mensual' CHECK (recurrencia_tipo IN ('diario', 'semanal', 'mensual', 'anual')),
   pagado BOOLEAN DEFAULT FALSE,
   fecha_pago DATE,
   metodo_pago TEXT DEFAULT 'debito_automatico' CHECK (metodo_pago IN ('debito_automatico', 'transferencia', 'efectivo', 'tarjeta', 'otro')),
