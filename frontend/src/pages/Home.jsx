@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import PaymentForm from '../components/PaymentForm'
 import PaymentList from '../components/PaymentList'
-import { HiArrowUp, HiArrowDown, HiExclamation, HiCreditCard, HiCheckCircle } from 'react-icons/hi'
+import { HiArrowUp, HiArrowDown, HiExclamation, HiCreditCard } from 'react-icons/hi'
 
 export default function Home() {
   const [refreshKey, setRefreshKey] = useState(0)
+  const [editItem, setEditItem] = useState(null)
   const [stats, setStats] = useState({ gastado: 0, ingresos: 0, pendientes: 0, vencidos: 0, realizados: 0 })
 
   const loadStats = async () => {
@@ -30,6 +31,17 @@ export default function Home() {
   }
 
   useEffect(() => { loadStats() }, [refreshKey])
+
+  const handleEdit = (pago) => {
+    setEditItem(pago)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleSuccess = () => {
+    setRefreshKey((k) => k + 1)
+    loadStats()
+    setEditItem(null)
+  }
 
   const cards = [
     { label: 'Gastado', value: `$${stats.gastado.toFixed(2)}`, icon: HiArrowUp, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-900/20' },
@@ -68,11 +80,11 @@ export default function Home() {
         </div>
       )}
 
-      <PaymentForm onSuccess={() => { setRefreshKey((k) => k + 1); loadStats() }} />
+      <PaymentForm onSuccess={handleSuccess} editItem={editItem} onCancelEdit={() => setEditItem(null)} />
 
       <div>
         <h2 className="text-lg font-bold mb-3">Pagos</h2>
-        <PaymentList refreshKey={refreshKey} />
+        <PaymentList refreshKey={refreshKey} onEdit={handleEdit} />
       </div>
     </div>
   )
