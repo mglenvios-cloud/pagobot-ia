@@ -57,9 +57,11 @@ export default function IncomeForm({ onSuccess, editItem, onCancelEdit }) {
     }
 
     if (editItem) {
-      await supabase.from('ingresos').update(payload).eq('id', editItem.id)
+      const { error } = await supabase.from('ingresos').update(payload).eq('id', editItem.id)
+      if (error) { alert('Error: ' + error.message); setLoading(false); return }
     } else {
-      await supabase.from('ingresos').insert([payload])
+      const { error } = await supabase.from('ingresos').insert([payload])
+      if (error) { alert('Error: ' + error.message); setLoading(false); return }
     }
 
     resetForm()

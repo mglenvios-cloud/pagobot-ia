@@ -61,9 +61,11 @@ export default function PaymentForm({ onSuccess, editItem, onCancelEdit }) {
     }
 
     if (editItem) {
-      await supabase.from('pagos').update(payload).eq('id', editItem.id)
+      const { error } = await supabase.from('pagos').update(payload).eq('id', editItem.id)
+      if (error) { alert('Error: ' + error.message); setLoading(false); return }
     } else {
-      await supabase.from('pagos').insert([{ ...payload, pagado: false }])
+      const { error } = await supabase.from('pagos').insert([{ ...payload, pagado: false }])
+      if (error) { alert('Error: ' + error.message); setLoading(false); return }
     }
 
     resetForm()
